@@ -1,0 +1,5 @@
+# Dump all Enabled and Running scheduled tasks on the system, along with run level, user group, and security descriptors
+Get-ScheduledTask -Verbose | Where-Object { $_.State -NE 'Disabled' } | Select-Object -Property TaskName,State,SecurityDescriptor -ExpandProperty Principal | Select-Object -Property TaskName,State,GroupId,LogonType,SecurityDescriptor | ft
+
+# Identify likely third-party tasks; possibly more susceptible to misconfigurations
+Get-ScheduledTask -Verbose | Where-Object { $_.State -NE 'Disabled' } | Select-Object -Property TaskName,State,TaskPath,SecurityDescriptor -Expandproperty Principal | Select-Object -Property TaskName,State,GroupId,LogonType,TaskPath,SecurityDescriptor | Where-Object -Property TaskPath -Notlike '*Microsoft*' | ft
